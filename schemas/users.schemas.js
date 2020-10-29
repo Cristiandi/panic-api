@@ -11,7 +11,14 @@ const sendForgottenPasswordEmailSchema = Joi.object({
   email: Joi.string().email().required()
 });
 
+const changePasswordSchema = Joi.object({
+  email: Joi.string().email().required(),
+  oldPassword: Joi.string().required(),
+  newPassword: Joi.string().required()
+});
+
 module.exports = {
   registerSchema,
-  sendForgottenPasswordEmailSchema
+  sendForgottenPasswordEmailSchema,
+  changePasswordSchema
 };

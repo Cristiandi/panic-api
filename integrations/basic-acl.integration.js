@@ -10,6 +10,7 @@ class BasicACL {
     this.companyUuid = environment.BASIC_ACL_COMPANY_UUID;
     this.email = environment.BASIC_ACL_ADMIN_EMAIL;
     this.password = environment.BASIC_ACL_ADMIN_PASSWORD;
+    this.projectCode = environment.BASIC_ACL_PROJECT_CODE;
   }
 
   async getToken () {
@@ -68,6 +69,55 @@ class BasicACL {
       });
 
       return response.data;
+    } catch (error) {
+      throw new HttpException(error.response.data.statusCode, error.response.data.message);
+    }
+  }
+
+  async changePassword (email, oldPassword, newPassword) {
+    try {
+      const token = await this.getToken();
+
+      const response = await axios({
+        url: `${this.baseUrl}users/change-password`,
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'company-uuid': this.companyUuid
+        },
+        data: {
+          companyUuid: this.companyUuid,
+          email,
+          oldPassword,
+          newPassword
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new HttpException(error.response.data.statusCode, error.response.data.message);
+    }
+  }
+
+  async checkPermission (token, requestedRoute, requestedMethod) {
+    try {
+      const response = await axios({
+        url: `${this.baseUrl}permissions/check`,
+        method: 'post',
+        data: {
+          companyUuid: this.companyUuid,
+          projectCode: this.projectCode,
+          token,
+          requestedRoute,
+          requestedMethod
+        }
+      });
+
+      const { data } = response;
+
+      const { allowed, reason } = data;
+
+      return { allowed, reason };
     } catch (error) {
       throw new HttpException(error.response.data.statusCode, error.response.data.message);
     }
