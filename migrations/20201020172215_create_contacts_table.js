@@ -19,9 +19,9 @@ const up = (knex) => {
 };
 
 const down = (knex) => {
-  return knex.schema.hasTable('users').then(exists => {
+  return knex.schema.hasTable('contacts').then(exists => {
     if (exists) {
-      return knex.schema.dropTable('users');
+      return knex.schema.dropTable('contacts');
     }
   });
 };
