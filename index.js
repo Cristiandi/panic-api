@@ -6,7 +6,8 @@ const morgan = require('morgan');
 const environment = require('./environment');
 const errorHandling = require('./middlwares/error-handling.middleware');
 
-const userServices = require('./services/users.services');
+const usersServices = require('./services/users.services');
+const contactsServices = require('./services/contacts.services');
 
 const app = express();
 
@@ -36,7 +37,8 @@ app.use(bodyParser.raw({ verify: rawBodySaver, type: () => true }));
 
 app.get('/', (req, res, next) => res.status(200).send(`Hi there! ${new Date()}`));
 
-app.use('/users', userServices);
+app.use('/users', usersServices);
+app.use('/contacts', contactsServices);
 
 // using to handle the error an return it in json format
 app.use(errorHandling);

@@ -60,7 +60,7 @@ router.post('/', async (req, res, next) => {
     // creo el usuario en mi base de datos
     const created = await database.createOne('users', objectToCreate);
 
-    return res.status(200).send(created);
+    return res.status(201).send(created);
   } catch (error) {
     return next(error);
   }
