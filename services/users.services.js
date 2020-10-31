@@ -125,7 +125,7 @@ router.post('/change-password', async (req, res, next) => {
 
   // cambio la password
   try {
-    await basicACL.changePassword(body.email, body.oldPassword, body.newPassword);
+    await basicACL.changePassword(body.email, body.old_password, body.new_password);
   } catch (error) {
     return next(error);
   }
