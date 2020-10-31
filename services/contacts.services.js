@@ -99,7 +99,7 @@ router.get('/:user_id', async (req, res, next) => {
     const existing = await database.getOne('contacts', { user_id: params.user_id });
 
     if (!existing) {
-      throw new HttpException(404, `no se puede obtener el contacto para el usuario ${params.user_id}.`);
+      return res.status(200).send(null);
     }
 
     return res.status(200).send(existing);

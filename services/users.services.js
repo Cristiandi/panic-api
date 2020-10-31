@@ -9,7 +9,8 @@ const { getTokenFromHeaders } = require('../utils');
 const {
   registerSchema,
   sendForgottenPasswordEmailSchema,
-  changePasswordSchema
+  changePasswordSchema,
+  meSchema
 } = require('../schemas/users.schemas');
 
 const router = express.Router();
@@ -131,6 +132,48 @@ router.post('/change-password', async (req, res, next) => {
   }
 
   return res.status(200).send(body);
+});
+
+router.get('/me/:uuid', async (req, res, next) => {
+  const { headers, originalUrl, method, params } = req;
+
+  try {
+    // get the token
+    const token = getTokenFromHeaders(headers);
+
+    if (!token) {
+      throw new HttpException(401, `can't get the token from headers.`);
+    }
+
+    // check if the user can access
+    const result = await basicACL.checkPermission(token, originalUrl, method);
+
+    if (!result.allowed) {
+      throw new HttpException(403, result.reason);
+    }
+  } catch (error) {
+    return next(error);
+  }
+
+  // valido el cuerpo de la peticion http
+  try {
+    await meSchema.validateAsync(params);
+  } catch (error) {
+    const { details } = error;
+    return res.status(400).send(details || error);
+  }
+
+  try {
+    const existing = await database.getOne('users', { uuid: params.uuid });
+
+    if (!existing) {
+      throw new HttpException(404, `can't get the user with uuid ${params.uuid}.`);
+    }
+
+    return res.status(200).send(existing);
+  } catch (error) {
+    return next(error);
+  }
 });
 
 router.get('/', async (req, res, next) => {

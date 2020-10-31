@@ -17,8 +17,13 @@ const changePasswordSchema = Joi.object({
   new_password: Joi.string().required()
 });
 
+const meSchema = Joi.object({
+  uuid: Joi.string().required()
+});
+
 module.exports = {
   registerSchema,
   sendForgottenPasswordEmailSchema,
-  changePasswordSchema
+  changePasswordSchema,
+  meSchema
 };
