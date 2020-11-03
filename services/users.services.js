@@ -10,7 +10,9 @@ const {
   registerSchema,
   sendForgottenPasswordEmailSchema,
   changePasswordSchema,
-  meSchema
+  meSchema,
+  updateParamsSchema,
+  updateBodySchema
 } = require('../schemas/users.schemas');
 
 const router = express.Router();
@@ -176,12 +178,57 @@ router.get('/me/:uuid', async (req, res, next) => {
   }
 });
 
-router.get('/', async (req, res, next) => {
-  return res.status(200).send('TODO');
-});
-
 router.patch('/:id', async (req, res, next) => {
-  return res.status(200).send('TODO');
+  const { headers, originalUrl, method, params, body } = req;
+
+  try {
+    // get the token
+    const token = getTokenFromHeaders(headers);
+
+    if (!token) {
+      throw new HttpException(401, `can't get the token from headers.`);
+    }
+
+    // check if the user can access
+    const result = await basicACL.checkPermission(token, originalUrl, method);
+
+    if (!result.allowed) {
+      throw new HttpException(403, result.reason);
+    }
+  } catch (error) {
+    return next(error);
+  }
+
+  // valido el cuerpo de la peticion http
+  try {
+    await updateParamsSchema.validateAsync(params);
+    await updateBodySchema.validateAsync(body);
+  } catch (error) {
+    const { details } = error;
+    return res.status(400).send(details || error);
+  }
+
+  try {
+    const existing = await database.getOne('users', { id: params.id });
+
+    if (!existing) {
+      throw new HttpException(404, `can't get a user with id ${params.id}.`);
+    }
+
+    await basicACL.changePhone(existing.email, body.phone);
+
+    // actualizo el contacto
+    const objectToUpdate = {
+      phone: body.phone || existing.phone,
+      full_name: body.full_name || existing.full_name
+    };
+
+    const updated = await database.updateOne('users', existing.id, objectToUpdate);
+
+    return res.status(200).send(updated);
+  } catch (error) {
+    return next(error);
+  }
 });
 
 module.exports = router;

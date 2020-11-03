@@ -122,6 +122,30 @@ class BasicACL {
       throw new HttpException(error.response.data.statusCode, error.response.data.message);
     }
   }
+
+  async changePhone (email, phone) {
+    try {
+      const token = await this.getToken();
+
+      const response = await axios({
+        url: `${this.baseUrl}users/change-phone`,
+        method: 'patch',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'company-uuid': this.companyUuid
+        },
+        data: {
+          companyUuid: this.companyUuid,
+          email,
+          phone
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new HttpException(error.response.data.statusCode, error.response.data.message);
+    }
+  }
 }
 
 module.exports = {
