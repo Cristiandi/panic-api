@@ -8,6 +8,7 @@ const errorHandling = require('./middlwares/error-handling.middleware');
 
 const usersServices = require('./services/users.services');
 const contactsServices = require('./services/contacts.services');
+const alertsServicers = require('./services/alerts.services');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.get('/', (req, res, next) => res.status(200).send(`Hi there! ${new Date()}`)
 
 app.use('/users', usersServices);
 app.use('/contacts', contactsServices);
+app.use('/alerts', alertsServicers);
 
 // using to handle the error an return it in json format
 app.use(errorHandling);

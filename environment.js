@@ -42,7 +42,14 @@ const environment = {
   BASIC_ACL_USER_ROLE_CODE: process.env.BASIC_ACL_USER_ROLE_CODE,
   BASIC_ACL_ADMIN_EMAIL: process.env.BASIC_ACL_ADMIN_EMAIL,
   BASIC_ACL_ADMIN_PASSWORD: process.env.BASIC_ACL_ADMIN_PASSWORD,
-  BASIC_ACL_PROJECT_CODE: process.env.BASIC_ACL_PROJECT_CODE
+  BASIC_ACL_PROJECT_CODE: process.env.BASIC_ACL_PROJECT_CODE,
+  /* SMT */
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PW: process.env.SMTP_PW,
+  /* GENERAL */
+  FROM_EMAIL: process.env.FROM_EMAIL
 };
 
 module.exports = environment;
