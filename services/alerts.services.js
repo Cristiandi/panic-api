@@ -55,7 +55,7 @@ router.post('/', async (req, res, next) => {
     const alertsCount = result[0].alerts_count;
 
     if (alertsCount >= 5) {
-      throw new HttpException(429, `ya excedio el limite de alertas emitidas en una semana.`);
+      throw new HttpException(429, `ya excedio el limite de alertas emitidas en una hora.`);
     }
 
     // obtengo el usuario
